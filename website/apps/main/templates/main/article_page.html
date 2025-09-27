@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Статья: {{ article.title }}
+{% endblock %}
+
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-6">
+        {% include 'components/_article-slider.html' %}
+    </div>
+    <div class="col-6">
+        <h2 class="text-center mb-4">{{ article.title }}</h2>
+        <ul class="list-group list-group-action">
+            <li class="list-group-item">
+                <b>Просмотры: </b> {{ article.views }}
+            </li>
+            <li class="list-group-item">
+                <b>Категория: </b>
+                <a href="{% url 'category-page' article.category.pk %}">{{ article.category.name }}</a>
+            </li>
+            <li class="list-group-item">
+                <b>Автор: </b> <a href="">{{ article.author.username }}</a>
+            </li>
+            <li class="list-group-item">
+                <b>Дата публикации: </b>{{ article.created_at }}
+            </li>
+            <li class="list-group-item">
+                <b>Кол-во комментариев: </b>{{ article.comment_set.all.count }}
+            </li>
+            <li class="list-group-item">
+                <b>Кол-во лайков: </b>{{ article.likes.user.all.count }}
+            </li>
+            <li class="list-group-item">
+                <b>Кол-во дизлайков: </b>{{ article.dislikes.user.all.count }}
+            </li>
+        </ul>
+        <div class="d-flex mt-4">
+            {% if request.user == article.author %}
+            <div class="d-flex column-gap-3">
+                <a href="{% url 'update-article' article.pk %}" class="btn btn-warning">Изменить</a>
+                <a href="{% url 'delete-article' article.pk %}" class="btn btn-danger">Удалить</a>
+            </div>
+            {% endif %}
+
+            {% if request.user.is_authenticated and request.user != article.author %}
+            <div class="d-flex column-gap-3">
+                <a href="{% url 'vote' article.pk 'add_like' %}" class="btn btn-success">Лайк</a>
+                <a href="{% url 'vote' article.pk 'add_dislike' %}" class="btn btn-danger">Дизлайк</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="mb-4">
+    <p>
+        <i>{{ article.full_description }}</i>
+    </p>
+</div>
+
+<div class="mb-4">
+    <h2 class="text-center mb-4">Добавьте комментарий</h2>
+    <div class="row row-gap-3">
+        {% for comment in article.comment_set.all %}
+        <div class="col-4">{% include 'components/_comment-card.html' %}</div>
+        {% empty %}
+        <p>
+            <i>Комментариев нет...</i>
+        </p>
+        {% endfor %}
+    </div>
+</div>
+
+{% if request.user.is_authenticated %}
+<div>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-dark">Отправить</button>
+    </form>
+</div>
+{% endif %}
+
+{% endblock %}

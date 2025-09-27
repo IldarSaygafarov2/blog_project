@@ -1,0 +1,19 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    {{ comment.created_at }}
+
+    {% if request.user.is_superuser %}
+    <a href="{% url 'delete-comment' article.pk comment.pk %}" class="text-decoration-none text-danger fw-bold">Удалить</a>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    <figure>
+      <blockquote class="blockquote">
+        <p>{{ comment.text }}</p>
+      </blockquote>
+      <figcaption class="blockquote-footer">
+        {{ comment.author|title }}
+      </figcaption>
+    </figure>
+  </div>
+</div>

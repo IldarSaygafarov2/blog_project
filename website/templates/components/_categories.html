@@ -1,0 +1,16 @@
+{% load main_tags %}
+
+{% get_categories as categories %}
+<div class="list-group flex-row mt-4 text-center">
+  {% for category in categories %}
+  {% is_category_active request category.pk as is_active %}
+    <a href="{% url 'category-page' category.pk %}"
+       class="list-group-item list-group-item-action border-0 category-item {% if is_active %}active-page{% endif %}">
+      {{ category }}
+    </a>
+  {% endfor %}
+</div>  <!--Category-->
+
+
+
+<!--darcula-->
